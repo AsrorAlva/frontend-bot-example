@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",             // dasar path alias dari root project
+    "paths": {
+      "@/*": ["src/*"]          // bikin alias "@" menuju ke folder src/
+    },
+    "jsx": "react-jsx",         // support JSX React
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "allowJs": true,
+    "checkJs": false,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
