@@ -22,44 +22,18 @@ export const menuItems = [
       },
       {
         id: 'status-pengajuan',
-        title: 'Status Pengajuan',
+        title: 'Monitoring',
         path: '/pengajuan/status',
         role: 'all'
       }
     ]
   },
-  {
-    id: 'verifikasi',
-    title: 'Verifikasi',
-    icon: 'CheckSquare',
-    role: 'verifikator',
-    submenu: [
-      {
-        id: 'review-dokumen',
-        title: 'Review Dokumen & Validasi',
-        path: '/verifikasi/review',
-        role: 'verifikator'
-      },
-      {
-        id: 'hasil-review',
-        title: 'Hasil Review Teknis',
-        path: '/verifikasi/hasil',
-        role: 'verifikator'
-      }
-    ]
-  },
+
   {
     id: 'user-management',
     title: 'Manajemen User',
     icon: 'Users',
     path: '/users',
-    role: 'admin'
-  },
-  {
-    id: 'system-settings',
-    title: 'Pengaturan Sistem',
-    icon: 'Settings',
-    path: '/settings',
     role: 'admin'
   },
   {
@@ -243,4 +217,54 @@ export const chartData = {
     { month: 'May', pengajuan: 158, disetujui: 119, ditolak: 39 },
     { month: 'Jun', pengajuan: 171, disetujui: 134, ditolak: 37 }
   ]
+};
+
+// =====================================================
+// 🧩 DATA PENGAJUAN (untuk halaman PreviewDataPengajuan)
+// =====================================================
+
+export const previewDataPengajuan = [
+  {
+    id: 1,
+    nama: "Data Pengajuan 1",
+    fileCSV: "data_pengajuan_1.csv",
+    fileZIP: "dokumen_batch_1.zip",
+  },
+  {
+    id: 2,
+    nama: "Data Pengajuan 2",
+    fileCSV: "data_pengajuan_2.csv",
+    fileZIP: "dokumen_batch_2.zip",
+  },
+];
+
+// =====================================================
+// 🧩 DETAIL DATA PENGAJUAN (untuk halaman PreviewDataPengajuanDetail)
+// =====================================================
+
+export const previewDataPengajuanDetail = {
+  id: 1,
+  nama: "Data Pengajuan 1",
+  csvData: [
+    {
+      id: 1,
+      namaProduk: "Shiseido Serum",
+      noBatch: "B12345",
+      tanggalProduksi: "2025-10-25",
+      negaraAsal: "Japan",
+      jumlah: 200,
+    },
+    {
+      id: 2,
+      namaProduk: "Shiseido Lotion",
+      noBatch: "B12346",
+      tanggalProduksi: "2025-10-26",
+      negaraAsal: "Japan",
+      jumlah: 150,
+    },
+  ],
+  zipData: [
+    { id: 1, namaZip: "dokumen_batch_1.pdf" },
+    { id: 2, namaZip: "dokumen_batch_2.pdf" },
+  ],
 };

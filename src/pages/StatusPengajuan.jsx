@@ -33,7 +33,7 @@ const StatusPengajuan = () => {
       <Card className="bg-white border border-gray-200">
         <CardHeader>
           <CardTitle className="text-lg font-semibold text-gray-900">
-            Status Pengajuan Dokumen
+            Monitoring
           </CardTitle>
           <p className="text-sm text-gray-600">
             Pantau status pengajuan dokumen impor Anda

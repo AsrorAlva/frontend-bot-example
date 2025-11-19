@@ -11,12 +11,14 @@ import StatusPengajuan from "@/pages/StatusPengajuan";
 import ReviewDokumen from "@/pages/ReviewDokumen";
 import UserManagement from "@/pages/UserManagement";
 import ActivityLog from "@/pages/ActivityLog";
-
+import PreviewDataPengajuan from "@/pages/PreviewDataPengajuan";
+import PreviewDataPengajuanDetail from './pages/PreviewDataPengajuanDetail';
 
 
 
 import "@/App.css";
 import { AppProvider } from './context/AppContext';
+
 
 const Layout = ({ children, pageTitle }) => {
   return (
@@ -42,7 +44,9 @@ const getPageTitle = (pathname) => {
     '/verifikasi/hasil': 'Hasil Review Teknis',
     '/users': 'Manajemen User',
     '/settings': 'Pengaturan Sistem',
-    '/logs': 'Log Aktivitas'
+    '/logs': 'Log Aktivitas',
+    '/preview-data': 'Preview Data Pengajuan',
+    '/preview-data/detail': 'Detail Data Pengajuan',
   };
   return titleMap[pathname] || Dashboard;
 };
@@ -114,6 +118,22 @@ function App() {
             element={
               <Layout pageTitle="Log Aktivitas">
                 <ActivityLog />
+              </Layout>
+            }
+          />
+          <Route
+            path="/preview-data"
+            element={
+              <Layout pageTitle="Preview Data Pengajuan">
+                <PreviewDataPengajuan />
+              </Layout>
+            }
+          />
+          <Route
+            path="/preview-data/detail/:id"
+            element={
+              <Layout pageTitle="Detail Data Pengajuan">
+                <PreviewDataPengajuanDetail />
               </Layout>
             }
           />

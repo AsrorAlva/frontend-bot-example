@@ -1,217 +1,199 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import FileUploader from '@/components/Upload/FileUploader';
 import { useToast } from '@/hooks/use-toast';
+import { Upload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const FormUpload = () => {
-  const [formData, setFormData] = useState({
-    namaPerusahaan: '',
-    alamatPerusahaan: '',
-    nomorIzin: '',
-    namaProduk: '',
-    jenisBarang: '',
-    negaraAsal: '',
-    pemasok: '',
-    spesifikasiTeknis: '',
-    keterangan: ''
-  });
   const { toast } = useToast();
+  const [csvFile, setCsvFile] = useState(null);
+  const [zipFile, setZipFile] = useState(null);
 
-  const handleInputChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  // Fungsi handle upload file
+  const handleFileUpload = (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const maxSize = type === 'csv' ? 5 : 50; // MB
+    const isValidType =
+      (type === 'csv' && file.name.endsWith('.csv')) ||
+      (type === 'zip' && file.name.endsWith('.zip'));
+
+    if (!isValidType) {
+      toast({
+        title: "Format File Tidak Sesuai",
+        description: `File ${type.toUpperCase()} harus berformat .${type}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size / 1024 / 1024 > maxSize) {
+      toast({
+        title: "Ukuran File Terlalu Besar",
+        description: `Maksimal ${maxSize} MB untuk file ${type.toUpperCase()}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (type === 'csv') setCsvFile(file);
+    else setZipFile(file);
   };
 
+  const navigate = useNavigate();
+  // Fungsi submit
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!csvFile || !zipFile) {
+      toast({
+        title: "Upload Belum Lengkap",
+        description: "Pastikan Anda sudah mengunggah file CSV dan ZIP.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
-      title: "Formulir Berhasil Dikirim",
-      description: "Dokumen Anda telah berhasil diajukan dan akan segera diproses.",
+      title: "Upload Berhasil 🎉",
+      description: "Data CSV dan ZIP berhasil diunggah. Sistem akan memproses pengajuan Anda.",
       duration: 5000,
     });
+
+    // Reset form
+    setCsvFile(null);
+    setZipFile(null);
+
+    navigate('/preview-data');
   };
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Data Perusahaan */}
-        <Card className="bg-white border border-gray-200">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-              📋 Data Perusahaan
+    <div className="w-full p-8 bg-gray-50 min-h-screen">
+      <form onSubmit={handleSubmit} className="space-y-10">
+        
+        {/* 📘 Div 1: Panduan Upload */}
+        <Card className="w-full bg-white border border-gray-200 shadow-md rounded-2xl">
+          <CardHeader className="border-b border-gray-100 pb-4">
+            <CardTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+              📘 Panduan Upload Dokumen
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="namaPerusahaan">Nama Perusahaan *</Label>
-                <Input
-                  id="namaPerusahaan"
-                  value={formData.namaPerusahaan}
-                  onChange={(e) => handleInputChange('namaPerusahaan', e.target.value)}
-                  placeholder="PT. Contoh Perusahaan"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="nomorIzin">Nomor Izin BPOM *</Label>
-                <Input
-                  id="nomorIzin"
-                  value={formData.nomorIzin}
-                  onChange={(e) => handleInputChange('nomorIzin', e.target.value)}
-                  placeholder="NA18240100001"
-                  required
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="alamatPerusahaan">Alamat Perusahaan *</Label>
-              <Textarea
-                id="alamatPerusahaan"
-                value={formData.alamatPerusahaan}
-                onChange={(e) => handleInputChange('alamatPerusahaan', e.target.value)}
-                placeholder="Jl. Contoh No. 123, Jakarta"
-                className="min-h-[80px]"
-                required
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Data Impor */}
-        <Card className="bg-white border border-gray-200">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-              🌍 Data Impor
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="namaProduk">Nama Produk *</Label>
-                <Input
-                  id="namaProduk"
-                  value={formData.namaProduk}
-                  onChange={(e) => handleInputChange('namaProduk', e.target.value)}
-                  placeholder="Serum Wajah Vitamin C"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Jenis Barang *</Label>
-                <Select onValueChange={(value) => handleInputChange('jenisBarang', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Pilih jenis barang" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="kosmetik">Kosmetik</SelectItem>
-                    <SelectItem value="obat">Obat</SelectItem>
-                    <SelectItem value="suplemen">Suplemen</SelectItem>
-                    <SelectItem value="makanan">Makanan Olahan</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="negaraAsal">Negara Asal *</Label>
-                <Input
-                  id="negaraAsal"
-                  value={formData.negaraAsal}
-                  onChange={(e) => handleInputChange('negaraAsal', e.target.value)}
-                  placeholder="Korea Selatan"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="pemasok">Nama Pemasok *</Label>
-                <Input
-                  id="pemasok"
-                  value={formData.pemasok}
-                  onChange={(e) => handleInputChange('pemasok', e.target.value)}
-                  placeholder="ABC Beauty Co. Ltd"
-                  required
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Data Teknis */}
-        <Card className="bg-white border border-gray-200">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-              🔬 Data Teknis Barang
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="spesifikasiTeknis">Spesifikasi Teknis *</Label>
-              <Textarea
-                id="spesifikasiTeknis"
-                value={formData.spesifikasiTeknis}
-                onChange={(e) => handleInputChange('spesifikasiTeknis', e.target.value)}
-                placeholder="Mengandung Vitamin C 20%, Hyaluronic Acid, dan Niacinamide..."
-                className="min-h-[100px]"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="keterangan">Keterangan Tambahan</Label>
-              <Textarea
-                id="keterangan"
-                value={formData.keterangan}
-                onChange={(e) => handleInputChange('keterangan', e.target.value)}
-                placeholder="Informasi tambahan tentang produk (opsional)"
-                className="min-h-[80px]"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Upload Dokumen */}
-        <Card className="bg-white border border-gray-200">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-              📁 Upload Dokumen
-            </CardTitle>
-            <p className="text-sm text-gray-600">
-              Upload dokumen yang diperlukan untuk proses verifikasi
+          <CardContent className="space-y-5 text-gray-700 text-base leading-relaxed pt-4">
+            <p>
+              Sebelum melakukan proses upload, pastikan folder <b>CSV</b> dan <b>ZIP</b> sudah disiapkan dengan format yang benar.
             </p>
-          </CardHeader>
-          <CardContent>
-            <FileUploader 
-              multiple={true}
-              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-              maxSize={10}
-            />
-            
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">Dokumen yang diperlukan:</h4>
-              <ul className="text-sm text-blue-700 space-y-1">
-                <li>• Certificate of Analysis (CoA)</li>
-                <li>• Manufacturing License</li>
-                <li>• Free Sale Certificate</li>
-                <li>• Product Specification</li>
-                <li>• Label dan Kemasan Produk</li>
-              </ul>
+            <p>
+              Berikut adalah <b>template Excel</b> yang digunakan untuk pengisian data — jangan lupa ubah formatnya ke <b>CSV (Comma Delimited)</b> sebelum diunggah ke sistem.
+            </p>
+            <p>
+              Berikut adalah panduan lengkap melalui <b>video tutorial</b> agar proses upload berjalan dengan lancar.
+            </p>
+            <div className="flex flex-wrap gap-3 mt-4">
+              <Button variant="outline" type="button" className="px-5 py-2">
+                📥 Download Template Excel
+              </Button>
+              <Button variant="secondary" type="button" className="px-5 py-2">
+                🎥 Lihat Video Tutorial
+              </Button>
             </div>
           </CardContent>
         </Card>
 
-        {/* Submit Button */}
-        <div className="flex justify-end space-x-4">
-          <Button type="button" variant="outline">
+        {/* 📄 Div 2: Upload CSV */}
+        <Card className="w-full bg-white border border-gray-200 shadow-md rounded-2xl">
+          <CardHeader className="border-b border-gray-100 pb-4">
+            <CardTitle className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+              📄 Upload File CSV
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <label
+              htmlFor="csvUpload"
+              className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:bg-gray-50 transition-all"
+            >
+              <Upload className="w-10 h-10 text-gray-500 mb-3" />
+              <span className="text-gray-700 text-sm font-medium">
+                Klik atau seret file CSV ke sini
+              </span>
+              <span className="text-xs text-gray-500 mt-1">(Maksimal 5 MB)</span>
+              <input
+                id="csvUpload"
+                type="file"
+                accept=".csv"
+                onChange={(e) => handleFileUpload(e, 'csv')}
+                className="hidden"
+              />
+            </label>
+
+            {csvFile && (
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm flex justify-between items-center">
+                ✅ File CSV terpilih: <b>{csvFile.name}</b>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCsvFile(null)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  Hapus
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* 📦 Div 3: Upload ZIP */}
+        <Card className="w-full bg-white border border-gray-200 shadow-md rounded-2xl">
+          <CardHeader className="border-b border-gray-100 pb-4">
+            <CardTitle className="text-2xl font-semibold text-gray-900 flex items-center gap-2">
+              📦 Upload File ZIP
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-6">
+            <label
+              htmlFor="zipUpload"
+              className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:bg-gray-50 transition-all"
+            >
+              <Upload className="w-10 h-10 text-gray-500 mb-3" />
+              <span className="text-gray-700 text-sm font-medium">
+                Klik atau seret file ZIP ke sini
+              </span>
+              <span className="text-xs text-gray-500 mt-1">(Maksimal 50 MB)</span>
+              <input
+                id="zipUpload"
+                type="file"
+                accept=".zip"
+                onChange={(e) => handleFileUpload(e, 'zip')}
+                className="hidden"
+              />
+            </label>
+
+            {zipFile && (
+              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm flex justify-between items-center">
+                ✅ File ZIP terpilih: <b>{zipFile.name}</b>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setZipFile(null)}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  Hapus
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Tombol Aksi */}
+        <div className="flex justify-end pt-4 space-x-4">
+          <Button type="button" variant="outline" className="px-6 py-2">
             Simpan Draft
           </Button>
-          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+          <Button
+            type="submit"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2"
+          >
             Kirim Pengajuan
           </Button>
         </div>
